@@ -1,4 +1,4 @@
 module Dynamic where
 
 greet :: IO ()
-greet = putStrLn "Hello from dynamic code!"
+greet = putStrLn "Hello from dynamic code 11!"

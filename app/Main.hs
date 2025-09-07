@@ -5,7 +5,7 @@ module Main where
 import Control.Concurrent (threadDelay)
 import Control.Exception (IOException, try)
 import Control.Monad (forever, when)
-import Data.IORef (IORef, newIORef, readIORef, writeIORef)
+import Data.IORef (newIORef, readIORef, writeIORef)
 import Language.Haskell.Interpreter
 import System.Directory (getModificationTime)
 import System.FSNotify
@@ -34,7 +34,7 @@ main = do
                     Left _ -> pure ()
         _ <- watchDir mgr "." (const True) $ \event ->
             case event of
-                Added path _ -> whenFile path reloadIfNew
+                Added path _ _ -> whenFile path reloadIfNew
                 Modified path _ _ -> whenFile path reloadIfNew
                 _ -> pure ()
         forever $ threadDelay maxBound
