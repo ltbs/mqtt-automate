@@ -16,7 +16,7 @@ executable reloader
     , directory
     , filepath
     , time
-    , mqtt-client
+    , net-mqtt
     , text
     , bytestring
     , network-uri

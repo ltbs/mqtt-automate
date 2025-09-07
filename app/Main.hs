@@ -13,7 +13,7 @@ import System.FilePath (takeFileName)
 import Data.Time.Clock (UTCTime)
 import qualified Data.Text as T
 import qualified Data.ByteString.Lazy.Char8 as BL8
-import Network.MQTT.Client
+import Network.MQTT.Client (MQTTClient, mqttConfig, connectURI, subscribe, MessageCallback(..))
 import Network.MQTT.Types (QoS(..))
 import Network.URI (parseURI)
 
@@ -21,7 +21,7 @@ watchFile :: FilePath
 watchFile = "Dynamic.hs"
 
 -- | Reload the dynamic module and update subscriptions and handlers.
-reload :: Client -> IORef (String -> String -> IO ()) -> IO ()
+reload :: MQTTClient -> IORef (String -> String -> IO ()) -> IO ()
 reload client handlerRef = do
     putStrLn "Reloading..."
     result <- runInterpreter $ do
