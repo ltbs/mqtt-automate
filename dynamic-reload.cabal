@@ -15,4 +15,5 @@ executable reloader
     , fsnotify
     , directory
     , filepath
+    , time
   default-language: Haskell2010
