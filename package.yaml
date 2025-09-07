@@ -15,4 +15,8 @@ executables:
       - fsnotify
       - directory
       - filepath
+      - mqtt-client
+      - text
+      - bytestring
+      - network-uri
 
