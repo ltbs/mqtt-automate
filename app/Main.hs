@@ -13,7 +13,7 @@ import System.FilePath (takeFileName)
 import Data.Time.Clock (UTCTime)
 import qualified Data.Text as T
 import qualified Data.ByteString.Lazy.Char8 as BL8
-import Network.MQTT.Client (MQTTClient, mqttConfig, connectURI, subscribe, MessageCallback(..))
+import Network.MQTT.Client (MQTTClient, mqttConfig, connectURI, subscribe, MessageCallback(..), _msgCB)
 import Network.MQTT.Types (QoS(..))
 import Network.URI (parseURI)
 
