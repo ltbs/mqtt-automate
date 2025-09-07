@@ -16,4 +16,8 @@ executable reloader
     , directory
     , filepath
     , time
+    , net-mqtt
+    , text
+    , bytestring
+    , network-uri
   default-language: Haskell2010
