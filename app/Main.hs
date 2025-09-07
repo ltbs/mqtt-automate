@@ -21,13 +21,7 @@ main = do
     lastTimeRef <- newIORef initialTime
     withManager $ \mgr -> do
         putStrLn $ "Watching " ++ watchFile ++ " for changes..."
-        _ <- watchDir mgr "." (const True) $ \event ->
-            case event of
-                Added path _ -> whenFile path reloadIfNew
-                Modified path _ _ -> whenFile path reloadIfNew
-                _ -> pure ()
-          where
-            whenFile path action =
+        let whenFile path action =
                 when (takeFileName path == watchFile) action
             reloadIfNew = do
                 mTime <- try (getModificationTime watchFile) :: IO (Either IOException UTCTime)
@@ -38,6 +32,11 @@ main = do
                             writeIORef lastTimeRef newTime
                             reload
                     Left _ -> pure ()
+        _ <- watchDir mgr "." (const True) $ \event ->
+            case event of
+                Added path _ -> whenFile path reloadIfNew
+                Modified path _ _ -> whenFile path reloadIfNew
+                _ -> pure ()
         forever $ threadDelay maxBound
 
 reload :: IO ()
