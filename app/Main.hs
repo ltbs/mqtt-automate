@@ -3,12 +3,14 @@
 module Main where
 
 import Control.Concurrent (threadDelay)
+import Control.Exception (IOException, try)
 import Control.Monad (forever, when)
 import Data.IORef (IORef, newIORef, readIORef, writeIORef)
 import Language.Haskell.Interpreter
 import System.Directory (getModificationTime)
 import System.FSNotify
 import System.FilePath (takeFileName)
+import Data.Time.Clock (UTCTime)
 
 watchFile :: FilePath
 watchFile = "Dynamic.hs"
@@ -20,12 +22,22 @@ main = do
     withManager $ \mgr -> do
         putStrLn $ "Watching " ++ watchFile ++ " for changes..."
         _ <- watchDir mgr "." (const True) $ \event ->
-            when (takeFileName (eventPath event) == watchFile) $ do
-                newTime <- getModificationTime watchFile
-                lastTime <- readIORef lastTimeRef
-                when (newTime > lastTime) $ do
-                    writeIORef lastTimeRef newTime
-                    reload
+            case event of
+                Added path _ -> whenFile path reloadIfNew
+                Modified path _ _ -> whenFile path reloadIfNew
+                _ -> pure ()
+          where
+            whenFile path action =
+                when (takeFileName path == watchFile) action
+            reloadIfNew = do
+                mTime <- try (getModificationTime watchFile) :: IO (Either IOException UTCTime)
+                case mTime of
+                    Right newTime -> do
+                        lastTime <- readIORef lastTimeRef
+                        when (newTime > lastTime) $ do
+                            writeIORef lastTimeRef newTime
+                            reload
+                    Left _ -> pure ()
         forever $ threadDelay maxBound
 
 reload :: IO ()
